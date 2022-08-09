@@ -1,10 +1,15 @@
 import turtle
 import random
+import winsound
 
-MAX_sPEED = 1.5
+
+MAX_SPEED = 1
+PADDLE_SPEED = 40
+score_1 = 0
+score_2 = 0
 
 def randSpeed():
-    return round(random.uniform(-MAX_sPEED, MAX_sPEED), 2)
+    return round(random.uniform(-MAX_SPEED, MAX_SPEED), 2)
 
 window = turtle.Screen()
 window.title("Pong")
@@ -41,28 +46,40 @@ ball.goto(0, 0)
 ball.dx = randSpeed()
 ball.dy = randSpeed()
 
+# pen
+pen = turtle.Turtle()
+pen.speed(0)
+pen.color("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 400)
+pen.write(f"Player 1: {score_1}     Player 2: {score_2}", align="center", font=("Roboto", 24, "normal"))
+
+
+
+
 # functions
 def move_paddle_1_up():
     y = paddle_1.ycor()
-    y += 30
+    y += PADDLE_SPEED
     paddle_1.sety(y)
 
 
 def move_paddle_1_down():
     y = paddle_1.ycor()
-    y -= 30
+    y -= PADDLE_SPEED
     paddle_1.sety(y)
 
 
 def move_paddle_2_up():
     y = paddle_2.ycor()
-    y += 30
+    y += PADDLE_SPEED
     paddle_2.sety(y)
 
 
 def move_paddle_2_down():
     y = paddle_2.ycor()
-    y -= 30
+    y -= PADDLE_SPEED
     paddle_2.sety(y)
 
 
@@ -82,21 +99,41 @@ while True:
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
 
-    # border check
+    # border check for ball
     if ball.ycor() >= 490:
+        winsound.PlaySound("./Sounds/bounce.wav", winsound.SND_ASYNC)
         ball.sety(490)
         ball.dy *= -1
 
     if ball.ycor() <= -490:
+        winsound.PlaySound("./Sounds/bounce.wav", winsound.SND_ASYNC)
         ball.sety(-490)
         ball.dy *= -1
 
     if ball.xcor() >= 990:
         ball.goto(0,0)
+        score_1 += 1
+        pen.clear()
+        pen.write(f"Player 1: {score_1}     Player 2: {score_2}", align="center", font=("Roboto", 24, "normal"))
         ball.dx = randSpeed()
 
     if ball.xcor() <= -990:
         ball.goto(0,0)
+        score_2 += 1
+        pen.clear()
+        pen.write(f"Player 1: {score_1}     Player 2: {score_2}", align="center", font=("Roboto", 24, "normal"))
         ball.dx = randSpeed()
 
     # paddle hit
+    if (paddle_1.xcor() - 10 <= ball.xcor() <= paddle_1.xcor() + 10) and (paddle_1.ycor() - 60 <= ball.ycor() <= paddle_1.ycor() + 60):
+        winsound.PlaySound("./Sounds/bounce.wav", winsound.SND_ASYNC)
+        ball.setx(-890)
+        ball.dx *= -1.03
+
+    if (paddle_2.xcor() - 10 <= ball.xcor() <= paddle_2.xcor() + 10) and (paddle_2.ycor() - 60 <= ball.ycor() <= paddle_2.ycor() + 60):
+        winsound.PlaySound("./Sounds/bounce.wav", winsound.SND_ASYNC)
+        ball.setx(890)
+        ball.dx *= -1.03
+
+
+
